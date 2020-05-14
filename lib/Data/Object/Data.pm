@@ -78,7 +78,9 @@ method item($name) {
 }
 
 method lines() {
-  my $file = $self->file or return '';
+  my $file = $self->file;
+
+  return '' if !$file || !-f $file;
 
   open my $fh, '<', $file or Carp::confess "$!: $file";
   my $lines = join "\n", <$fh>;
