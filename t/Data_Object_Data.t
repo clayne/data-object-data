@@ -193,7 +193,7 @@ content(Str $name) : ArrayRef[Str]
 
   $data->content('name');
 
-  # ['Example #1\n\n=head1 WHY?\n\n...']
+  # ['Example #1', '', '=head1 WHY?', ...]
 
 =cut
 
@@ -229,6 +229,50 @@ contents(Str $list, Str $name) : ArrayRef[ArrayRef]
   $data->contents('name');
 
  # [['Example #1'], ['Example #2']]
+
+=example-2 contents
+
+  # =name example-1
+  #
+  # Example #1
+  #
+  # +=head1 WHY?
+  #
+  # blah blah blah
+  #
+  # +=cut
+  #
+  # ...
+  #
+  # =cut
+
+  my $data = Data::Object::Data->new(
+    string => join "\n\n", (
+      '=name example-1',
+      '',
+      'Example #1',
+      '',
+      '+=head1 WHY?',
+      '',
+      'blah blah blah',
+      '',
+      '+=cut',
+      '',
+      'More information on the same topic as was previously mentioned in the',
+      '',
+      'previous section demonstrating the topic as-is obvious from said section',
+      '',
+      '...',
+      '',
+      '=cut'
+    )
+  );
+
+  $data->contents('name');
+
+  # [['Example #1', '', '=head1 WHY?', ...]]
+
+=cut
 
 =cut
 
@@ -545,6 +589,25 @@ $subs->example(-1, 'contents', 'method', fun($tryable) {
   is_deeply $result, [['Example #1'], ['Example #2']];
 
   $result
+});
+
+$subs->example(-2, 'contents', 'method', fun($tryable) {
+  ok my $result = $tryable->result;
+  ok scalar(@$result) == 1;
+  $result = $result->[0];
+  ok scalar(@$result) > 1;
+  my $text = $result->[0];
+  is $result->[0], 'Example #1';
+  is $result->[1], '';
+  is $result->[2], '=head1 WHY?';
+  is $result->[3], '';
+  is $result->[4], 'blah blah blah';
+  is $result->[5], '';
+  is $result->[6], '=cut';
+  is $result->[7], '';
+  like $result->[8], qr/information on the same topic/;
+
+  [$result]
 });
 
 $subs->example(-1, 'item', 'method', fun($tryable) {

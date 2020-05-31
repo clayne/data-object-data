@@ -45,6 +45,11 @@ has from => (
   lazy => 1
 );
 
+has string => (
+  is => 'ro',
+  lazy => 1
+);
+
 fun BUILD($self, $args) {
   $self->file;
   $self->data;
@@ -80,7 +85,7 @@ method item($name) {
 method lines() {
   my $file = $self->file;
 
-  return '' if !$file || !-f $file;
+  return $self->string || '' if !$file || !-f $file;
 
   open my $fh, '<', $file or Carp::confess "$!: $file";
   my $lines = join "\n", <$fh>;
