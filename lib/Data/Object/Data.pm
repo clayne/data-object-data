@@ -124,6 +124,7 @@ method parser($data) {
     my @info = split /\s/, $meta, 2;
     my ($list, $name) = @info == 2 ? @info : (undef, @info);
 
+    $data =~ s/\n\+=/\n=/g; # auto-escape nested pod syntax
     $data = [split /\n\n/, $data];
 
     my $item = { name => $name, data => $data, index => @$items + 1, list => $list };
