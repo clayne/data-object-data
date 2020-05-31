@@ -59,6 +59,67 @@ anywhere in the source code and having Perl properly ignoring them.
 
 =cut
 
+=scenario syntax
+
+This package supports parsing standard POD and pod-like sections from any file
+or package, anywhere in the document. Additionally, this package supports an
+alternative POD definition syntax which helps differentiate between the
+traditional POD usage and other usages.
+
+=example syntax
+
+  # POD
+
+  # =head1 NAME
+  #
+  # Example #1
+  #
+  # =cut
+  #
+  # =head1 NAME
+  #
+  # Example #2
+  #
+  # =cut
+
+  # Podish Syntax
+
+  # =name
+  #
+  # Example #1
+  #
+  # =cut
+  #
+  # =name
+  #
+  # Example #2
+  #
+  # =cut
+
+  # Alternate Podish Syntax
+
+  # @=name
+  #
+  # Example #1
+  #
+  # @=cut
+  #
+  # @=name
+  #
+  # Example #2
+  #
+  # @=cut
+
+  my $data = Data::Object::Data->new(
+    file => 't/examples/alternate.pod'
+  );
+
+  $data->contents('name');
+
+  # [['Example #1'], ['Example #2']]
+
+=cut
+
 =method content
 
 The content method the pod-like section where the name matches the given
@@ -400,6 +461,13 @@ $subs->synopsis(fun($tryable) {
   is $result->file, 't/Data_Object_Data.t';
   ok grep { ref eq 'HASH' } @{$result->data};
   ok !$result->from;
+
+  $result
+});
+
+$subs->scenario('syntax', fun($tryable) {
+  ok my $result = $tryable->result;
+  is_deeply $result, [['Example #1'], ['Example #2']];
 
   $result
 });

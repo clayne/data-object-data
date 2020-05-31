@@ -111,7 +111,7 @@ method list_item($list, $name) {
 method parser($data) {
   $data =~ s/\n*$/\n/;
 
-  my @chunks = split /^=\s*(.+?)\s*\r?\n/m, $data;
+  my @chunks = split /^(?:@=|=)\s*(.+?)\s*\r?\n/m, $data;
 
   shift @chunks;
 
